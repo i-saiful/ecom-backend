@@ -5,7 +5,8 @@ const {
     createProduct,
     getProducts,
     getProductById,
-    updateProductById
+    updateProductById,
+    getPhoto
 } = require('../controllers/productController')
 
 router.route('/')
@@ -14,6 +15,9 @@ router.route('/')
 
 router.route('/:id')
     .get(getProductById)
-    .put(updateProductById)
+    .put([authorize, admin], updateProductById)
+
+router.route('/photo/:id')
+    .get(getPhoto)
 
 module.exports = router

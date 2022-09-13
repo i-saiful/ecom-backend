@@ -39,16 +39,78 @@ exports.createProduct = async (req, res) => {
     })
 }
 
+// api/product?order=desc&sortBy=name&limit=10
 exports.getProducts = async (req, res) => {
-    const products = await Product.find().select({photo: 0})
-    console.log('get producst');
+    const order = req.query.order === 'desc' ? -1 : 1
+    const sortBy = req.query.sortBy ??= '_id'
+    const limit = +req.query.limit < 10 ? +req.query.limit : 10
+    // console.log('order=', order, 'sortBy=', sortBy, 'limit=', limit, ' given limit = ', req.query.limit);
+    // console.log(typeof order, typeof sortBy, typeof limit);
+    const products = await Product.find()
+        .select({ photo: 0 })
+        .sort({ [sortBy]: order })
+        .limit(limit)
+        .populate('category', 'name')
+    // console.log(req.query);
     return res.send(products)
 }
 
 exports.getProductById = async (req, res) => {
+    const productId = req.params.id
+    const products = await Product.findById(productId)
+        .select({ photo: 0 })
+        .populate('category', 'name')
 
+    if (products)
+        return res.send(products);
+    else
+        return res.status(400).send("products not found")
+}
+
+exports.getPhoto = async (req, res) => {
+    const productId = req.params.id
+    const product = await Product.findById(productId)
+        .select('photo')
+    if (product) {
+        res.set('Content-Type', product.photo.contentType)
+        return res.send(product.photo.data);
+    } else
+        return res.status(400).send("photo not found")
 }
 
 exports.updateProductById = async (req, res) => {
-
+    const productId = req.params.id;
+    const product = await Product.findById(productId);
+    if (product) {
+        let form = new formidable.IncomingForm();
+        form.keepExtensions = true
+        form.parse(req, (err, feilds, files) => {
+            if (err)
+                return res.status(400).send("Something wrong!")
+            const updateFeilds = _.pick(feilds, ['name', 'description', 'price', 'category', 'quantity'])
+            _.assignIn(product, updateFeilds)
+            if (files.photo) {
+                fs.readFile(files.photo.filepath, (err, data) => {
+                    if (err)
+                        return res.status(400).send("problem in file data!")
+                    product.photo.data = data;
+                    product.photo.contentType = files.photo.mimetype;
+                    product.save((err, result) => {
+                        if (err)
+                            res.status(500).send("Internal server problem")
+                        else
+                            return res.status(200).send({ message: "product update successfull!" });
+                    });
+                })
+            } else {
+                product.save((err, result) => {
+                    if (err)
+                        res.status(500).send("Internal server problem")
+                    else
+                        return res.status(200).send({ message: "product update successfull!" });
+                });
+            }
+        })
+    } else
+        return res.status(400).send("products not found")
 }
