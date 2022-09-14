@@ -114,3 +114,41 @@ exports.updateProductById = async (req, res) => {
     } else
         return res.status(400).send("products not found")
 }
+
+// const order = req.query.order === 'desc' ? -1 : 1
+// const sortBy = req.query.sortBy ??= '_id'
+// const limit = +req.query.limit < 10 ? +req.query.limit : 10
+exports.filterProducts = async (req, res) => {
+    const order = req.body.order === 'desc' ? -1 : 1
+    const sortBy = req.body.sortBy ??= '_id'
+    const limit = +req.body.limit < 10 ? +req.body.limit : 10
+    const skip = +req.body.skip
+    const filters = req.body.filters
+    const args = {}
+
+    for (const key in filters) {
+        if (filters[key].length > 0) {
+            if (key === 'price') {
+                args[key] = {
+                    $gte: filters[key][0],
+                    $lte: filters[key][1]
+                }
+            }
+            if (key === 'category') {
+                args[key] = {
+                    $in: filters[key]
+                }
+            }
+        }
+    }
+    
+    // console.log(skip)
+    const products = await Product.find(args)
+        .select({ photo: 0 })
+        .sort({ [sortBy]: order })
+        .skip(skip)
+        .limit(limit)
+        .populate('category', 'name')
+
+    res.send(products)
+}
