@@ -121,7 +121,7 @@ exports.updateProductById = async (req, res) => {
 exports.filterProducts = async (req, res) => {
     const order = req.body.order === 'desc' ? -1 : 1
     const sortBy = req.body.sortBy ??= '_id'
-    const limit = +req.body.limit < 10 ? +req.body.limit : 10
+    const limit = +req.body.limit ? +req.body.limit : 10
     const skip = +req.body.skip
     const filters = req.body.filters
     const args = {}

@@ -27,7 +27,7 @@ exports.createCartItem = async (req, res) => {
 
 exports.getCartItem = async (req, res) => {
     const cartItems = await CartItem.find({
-        user: req.body._id
+        user: req.user._id
     })
         .populate('product', 'name')
         .populate('user', 'name')
@@ -36,7 +36,7 @@ exports.getCartItem = async (req, res) => {
 
 exports.updateCartItem = async (req, res) => {
     const { _id, count } = _.pick(req.body, ['_id', 'count'])
-    const userId = req.body._id
+    const userId = req.user._id
     await CartItem.updateOne({
         _id: _id,
         user: userId

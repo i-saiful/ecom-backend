@@ -1,6 +1,6 @@
 const {Schema, model} = require('mongoose')
 
-exports.Profile = model('prifile', Schema({
+exports.Profile = model('profile', Schema({
     user: {
         type: Schema.Types.ObjectId,
         ref: 'user',
@@ -12,6 +12,6 @@ exports.Profile = model('prifile', Schema({
     address2: String,
     city: String,
     state: String,
-    postCode: Number,
+    postcode: Number,
     country: String
 }))
