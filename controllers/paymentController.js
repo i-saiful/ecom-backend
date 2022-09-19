@@ -32,7 +32,7 @@ module.exports.initPayment = async (req, res) => {
         success: "yoursite.com/success",
         fail: "yoursite.com/fail",
         cancel: "yoursite.com/cancel",
-        ipn: "yoursite.com/ipn",
+        ipn: "https://ecom-backend-saiful-lab.herokuapp.com/api/payment/ipn",
     });
 
     // Set order details
