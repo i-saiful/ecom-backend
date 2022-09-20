@@ -5,9 +5,9 @@ const { Payment } = require('../models/payment');
 const { Profile } = require('../models/profile')
 
 module.exports.ipn = async (req, res) => {
-    console.log(req.body);
+    // console.log(req.body);
     const payment = new Payment(req.body)
-    console.log(payment);
+    // console.log(payment);
     const tran_id = payment['tran_id']
 
     if (payment['status'] === 'VALID') {
@@ -20,7 +20,7 @@ module.exports.ipn = async (req, res) => {
         await Order.deleteOne({ transaction_id: tran_id })
         console.log('order cancle');
     }
-console.log('------------');
+    console.log('------------');
     const result = await payment.save()
     console.log(result);
     res.send('IPN')
