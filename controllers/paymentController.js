@@ -5,13 +5,13 @@ const { Payment } = require('../models/payment');
 const { Profile } = require('../models/profile')
 
 module.exports.ipn = async (req, res) => {
-    // console.log(req.body);
     const payment = new Payment(req.body)
-    // console.log(payment);
     const tran_id = payment['tran_id']
+    // console.log(req.body);
+    // console.log(payment);
 
     if (payment['status'] === 'VALID') {
-        const order = new Order.updateOne({
+        const order = await Order.updateOne({
             transaction_id: tran_id
         }, { status: 'Success' })
         await CartItem.deleteMany(order.cartItems)
