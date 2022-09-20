@@ -15,14 +15,10 @@ module.exports.ipn = async (req, res) => {
             transaction_id: tran_id
         }, { status: 'Success' })
         await CartItem.deleteMany(order.cartItems)
-        console.log('payment valid');
     } else {
         await Order.deleteOne({ transaction_id: tran_id })
-        console.log('order cancle');
     }
-    console.log('------------');
-    const result = await payment.save()
-    console.log(result);
+    await payment.save()
     res.send('IPN')
 }
 
@@ -98,7 +94,7 @@ module.exports.initPayment = async (req, res) => {
     });
 
     const response = await payment.paymentInit()
-
+console.log(response);
     const order = new Order({
         cartItems: cartItems,
         user: userId,
