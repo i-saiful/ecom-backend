@@ -18,7 +18,7 @@ module.exports.ipn = async (req, res) => {
         await Order.deleteOne({ transaction_id: tran_id })
         console.log('order cancle');
     }
-
+console.log('------------');
     await payment.save()
     res.send('IPN')
 }
