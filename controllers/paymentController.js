@@ -5,7 +5,9 @@ const { Payment } = require('../models/payment');
 const { Profile } = require('../models/profile')
 
 module.exports.ipn = async (req, res) => {
+    console.log(req.body);
     const payment = new Payment(req.body)
+    console.log(payment);
     const tran_id = payment['tran_id']
 
     if (payment['status'] === 'VALID') {
