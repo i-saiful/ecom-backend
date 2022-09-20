@@ -3,6 +3,7 @@ const { CartItem } = require('../models/cartItem');
 const { Order } = require('../models/order');
 const { Payment } = require('../models/payment');
 const { Profile } = require('../models/profile')
+const path = require('path')
 
 module.exports.ipn = async (req, res) => {
     const payment = new Payment(req.body)
@@ -45,9 +46,9 @@ module.exports.initPayment = async (req, res) => {
 
     // Set the urls
     payment.setUrls({
-        success: "yoursite.com/success",
-        fail: "yoursite.com/fail",
-        cancel: "yoursite.com/cancel",
+        success: "https://ecom-backend-saiful-lab.herokuapp.com/api/payment/success",
+        fail: "https://ecom-backend-saiful-lab.herokuapp.com/api/payment/fail",
+        cancel: "https://ecom-backend-saiful-lab.herokuapp.com/api/payment/cancel",
         ipn: "https://ecom-backend-saiful-lab.herokuapp.com/api/payment/ipn",
     });
 
@@ -94,7 +95,7 @@ module.exports.initPayment = async (req, res) => {
     });
 
     const response = await payment.paymentInit()
-console.log(response);
+
     const order = new Order({
         cartItems: cartItems,
         user: userId,
@@ -109,4 +110,8 @@ console.log(response);
     }
 
     return res.send(response)
+}
+
+exports.paymentSuccess = async (req, res) => {
+res.sendFile(path.join(__basedir + 'public/success.html'))
 }

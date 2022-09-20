@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { initPayment, ipn } = require('../controllers/paymentController');
+const { initPayment, ipn, paymentSuccess } = require('../controllers/paymentController');
 const authorize = require('../middlewares/authorize')
 
 router.route('/')
@@ -7,5 +7,8 @@ router.route('/')
 
 router.route('/ipn')
     .post(ipn)
+
+router.route('/payment')
+    .post(paymentSuccess)
 
 module.exports = router

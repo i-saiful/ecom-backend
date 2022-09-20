@@ -2,6 +2,8 @@ require('dotenv/config');
 const app = require('./app')
 const mongoose = require('mongoose')
 
+global.__basedir = __dirname
+
 const DB = process.env.MONGODB_SERVER.replace('<password>', process.env.MONGODB_SERVER_PASSWORD)
 mongoose.connect(DB)
     .then(() => console.log('Connected to MongoDB!'))
