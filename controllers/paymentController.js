@@ -21,7 +21,8 @@ module.exports.ipn = async (req, res) => {
         console.log('order cancle');
     }
 console.log('------------');
-    await payment.save()
+    const result = await payment.save()
+    console.log(result);
     res.send('IPN')
 }
 
