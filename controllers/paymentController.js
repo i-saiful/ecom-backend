@@ -4,10 +4,21 @@ const { Order } = require('../models/order');
 const { Payment } = require('../models/payment');
 const { Profile } = require('../models/profile')
 
-module.exports.ipn = async(req, res) => {
-    console.log(req.body);
-    // Order
-    // Payment
+module.exports.ipn = async (req, res) => {
+    const payment = new Payment(req.body)
+    const tran_id = payment['tran_id']
+
+    if (payment['status'] === 'VALID') {
+        const order = new Order.updateOne({
+            transaction_id: tran_id
+        }, { status: 'Success' })
+        await CartItem.deleteMany(order.cartItems)
+    } else {
+        await Order.deleteOne({ transaction_id: tran_id })
+    }
+
+    await payment.save()
+    res.send('IPN')
 }
 
 module.exports.initPayment = async (req, res) => {
@@ -81,6 +92,20 @@ module.exports.initPayment = async (req, res) => {
         product_profile: "general",
     });
 
-    const response = await payment.paymentInit() 
+    const response = await payment.paymentInit()
+
+    const order = new Order({
+        cartItems: cartItems,
+        user: userId,
+        transaction_id: tran_id,
+        address: profile
+    })
+
+    if (response.status === 'SUCCESS') {
+        // order.sessionKey = response.sessionkey
+        order['sessionKey'] = response['sessionkey'];
+        await order.save()
+    }
+
     return res.send(response)
 }
