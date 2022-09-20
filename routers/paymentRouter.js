@@ -8,7 +8,7 @@ router.route('/')
 router.route('/ipn')
     .post(ipn)
 
-router.route('/payment')
+router.route('/success')
     .post(paymentSuccess)
 
 module.exports = router
