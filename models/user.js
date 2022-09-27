@@ -19,14 +19,15 @@ const userSchema = Schema({
     password: {
         type: String,
         minlength: 6,
-        maxlength: 1024,
-        required: true
+        maxlength: 1024
     },
     role: {
         type: String,
         enum: ['user', 'admin'],
         default: 'user'
-    }
+    },
+    providerId: Number,
+    provider: String
 }, {
     timestamps: true
 })
