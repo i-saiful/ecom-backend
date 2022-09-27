@@ -8,7 +8,7 @@ router.route('/google')
 router.route('/google/callback')
     .get(passport.authenticate('google', { session: false }),
         (req, res) => {
-            res.redirect(`http://localhost:3000/login?${req.user}`)
+            res.redirect(`https://ecom-bohubrihi-772b1.web.app/login?${req.user}`)
         }
     )
 

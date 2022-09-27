@@ -6,7 +6,7 @@ const FacebookStrategy = require('passport-facebook').Strategy
 passport.use(new FacebookStrategy({
     clientID: process.env.FACEBOOK_APP_ID,
     clientSecret: process.env.FACEBOOK_APP_SECRET,
-    callbackURL: "http://localhost:3001/api/auth/facebook/callback",
+    callbackURL: "https://ecom-backend-saiful-lab.herokuapp.com/api/auth/facebook/callback",
     profileFields: ['id', 'displayName', 'email']
 },
     async function (accessToken, refreshToken, profile, cb) {
