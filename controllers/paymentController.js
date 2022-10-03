@@ -1,25 +1,9 @@
 const PaymentSession = require('ssl-commerz-node').PaymentSession;
 const { CartItem } = require('../models/cartItem');
 const { Order } = require('../models/order');
-// const { Payment } = require('../models/payment');
 const { Profile } = require('../models/profile')
 const path = require('path')
-
-// module.exports.ipn = async (req, res) => {
-//     const payment = new Payment(req.body)
-//     const tran_id = payment['tran_id']
-
-//     if (payment['status'] === 'VALID') {
-//         const order = await Order.updateOne({
-//             transaction_id: tran_id
-//         }, { status: 'Success' })
-//         await CartItem.deleteMany(order.cartItems)
-//     } else {
-//         await Order.deleteOne({ transaction_id: tran_id })
-//     }
-//     await payment.save()
-//     res.send('IPN')
-// }
+const crypto = require('node:crypto')
 
 module.exports.initPayment = async (req, res) => {
     const userId = req.user._id
@@ -34,8 +18,7 @@ module.exports.initPayment = async (req, res) => {
     const total_item = cartItems.map(item => item.count)
         .reduce((a, b) => a + b, 0);
 
-    const tran_id = (Date.now().toString(36) + Math.random().toString(36).slice(2))
-        .toUpperCase();
+    const tran_id = crypto.randomUUID().split('-').join('').toUpperCase()
 
     const payment = new PaymentSession(
         true,
@@ -103,7 +86,6 @@ module.exports.initPayment = async (req, res) => {
     })
 
     if (response.status === 'SUCCESS') {
-        // order.sessionKey = response.sessionkey
         order['sessionKey'] = response['sessionkey'];
         await order.save()
     }
