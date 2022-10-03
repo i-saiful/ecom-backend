@@ -36,6 +36,7 @@ module.exports.initPayment = async (req, res) => {
 
     // const tran_id = '_' + Math.random().toString(36).substr(2, 9) + (new Date()).getTime();
     const tran_id = crypto.randomUUID();
+    console.log(tran_id);
 
     const payment = new PaymentSession(
         true,
