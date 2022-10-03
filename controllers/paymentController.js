@@ -127,16 +127,9 @@ exports.paymentSuccess = async (req, res) => {
 exports.paymentCancel = async (req, res) => {
     const tran_id = req.body['tran_id']
 
-    console.log(req.body);
-
-    // if (req.body['status'] === 'VALID') {
-    //     const order = await Order.updateOne({
-    //         transaction_id: tran_id
-    //     }, { status: 'Success' })
-    //     await CartItem.deleteMany(order.cartItems)
-    // } else {
-    //     await Order.deleteOne({ transaction_id: tran_id })
-    // }
+    if (req.body['status'] === 'CANCELLED') {
+        await Order.deleteOne({ transaction_id: tran_id })
+    }
     res.sendFile(path.join(__basedir + '/public/cancel.html'))
 }
 
@@ -145,6 +138,6 @@ exports.paymentFail = async (req, res) => {
 
     if (req.body['status'] === 'FAILED') {
         await Order.deleteOne({ transaction_id: tran_id })
-    } 
+    }
     res.sendFile(path.join(__basedir + '/public/fail.html'))
 }
