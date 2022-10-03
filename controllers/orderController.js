@@ -9,7 +9,15 @@ exports.getOrder = async (req, res) => {
             transaction_id: 1,
             _id: 1,
             status: 1,
-            createdAt: 1
+            createdAt: 1,
+            discount: 1
+        })
+        .populate({
+            path: 'cartItems',
+            populate: {
+                path: 'product',
+                select: 'name'
+            }
         })
 
     res.send(result)
