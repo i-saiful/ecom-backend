@@ -107,7 +107,7 @@ module.exports.initPayment = async (req, res) => {
         order['sessionKey'] = response['sessionkey'];
         await order.save()
     }
-
+    console.log(response);
     return res.send(response)
 }
 
