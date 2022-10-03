@@ -8,7 +8,8 @@ exports.getOrder = async (req, res) => {
             cartItems: 1,
             transaction_id: 1,
             _id: 1,
-            status: 1
+            status: 1,
+            createdAt: 1
         })
 
     res.send(result)

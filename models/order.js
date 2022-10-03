@@ -26,5 +26,9 @@ exports.Order = model('order', Schema({
         ref: 'user',
         required: true
     },
-    sessionKey: String
+    sessionKey: String,
+    discount: {
+        type: Number,
+        default: 0
+    }
 },{timestamps: true}))
