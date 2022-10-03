@@ -34,7 +34,8 @@ module.exports.initPayment = async (req, res) => {
     const total_item = cartItems.map(item => item.count)
         .reduce((a, b) => a + b, 0);
 
-    const tran_id = Date.now().toString(36) + Math.random().toString(36).slice(2);
+    const tran_id = (Date.now().toString(36) + Math.random().toString(36).slice(2))
+        .toUpperCase();
 
     const payment = new PaymentSession(
         true,
@@ -106,7 +107,6 @@ module.exports.initPayment = async (req, res) => {
         order['sessionKey'] = response['sessionkey'];
         await order.save()
     }
-    console.log(response);
     return res.send(response)
 }
 
