@@ -14,7 +14,8 @@ exports.Product = model('product', Schema({
     photo: {
         data: Buffer,
         contentType: String
-    }
+    },
+    review: Number
 }, {
     timestamps: true
 }))

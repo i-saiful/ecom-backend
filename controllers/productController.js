@@ -140,8 +140,12 @@ exports.filterProducts = async (req, res) => {
                 }
             }
         }
+        if (key === 'search') {
+            args['name'] = {
+                $regex: filters[key], $options: 'i'
+            }
+        }
     }
-    
     // console.log(skip)
     const products = await Product.find(args)
         .select({ photo: 0 })

@@ -1,27 +1,25 @@
 const PaymentSession = require('ssl-commerz-node').PaymentSession;
 const { CartItem } = require('../models/cartItem');
 const { Order } = require('../models/order');
-const { Payment } = require('../models/payment');
+// const { Payment } = require('../models/payment');
 const { Profile } = require('../models/profile')
 const path = require('path')
 
-module.exports.ipn = async (req, res) => {
-    const payment = new Payment(req.body)
-    const tran_id = payment['tran_id']
-    // console.log(req.body);
-    // console.log(payment);
+// module.exports.ipn = async (req, res) => {
+//     const payment = new Payment(req.body)
+//     const tran_id = payment['tran_id']
 
-    if (payment['status'] === 'VALID') {
-        const order = await Order.updateOne({
-            transaction_id: tran_id
-        }, { status: 'Success' })
-        await CartItem.deleteMany(order.cartItems)
-    } else {
-        await Order.deleteOne({ transaction_id: tran_id })
-    }
-    await payment.save()
-    res.send('IPN')
-}
+//     if (payment['status'] === 'VALID') {
+//         const order = await Order.updateOne({
+//             transaction_id: tran_id
+//         }, { status: 'Success' })
+//         await CartItem.deleteMany(order.cartItems)
+//     } else {
+//         await Order.deleteOne({ transaction_id: tran_id })
+//     }
+//     await payment.save()
+//     res.send('IPN')
+// }
 
 module.exports.initPayment = async (req, res) => {
     const userId = req.user._id
@@ -49,7 +47,7 @@ module.exports.initPayment = async (req, res) => {
         success: "https://ecom-backend-saiful-lab.herokuapp.com/api/payment/success",
         fail: "https://ecom-backend-saiful-lab.herokuapp.com/api/payment/fail",
         cancel: "https://ecom-backend-saiful-lab.herokuapp.com/api/payment/cancel",
-        ipn: "https://ecom-backend-saiful-lab.herokuapp.com/api/payment/ipn",
+        ipn: "https://payment-gateway-saiful-lab.herokuapp.com/sslcommerz/ipn",
     });
 
     // Set order details
@@ -113,5 +111,47 @@ module.exports.initPayment = async (req, res) => {
 }
 
 exports.paymentSuccess = async (req, res) => {
+    const tran_id = req.body['tran_id']
+
+    if (req.body['status'] === 'VALID') {
+        const order = await Order.updateOne({
+            transaction_id: tran_id
+        }, { status: 'Success' })
+        await CartItem.deleteMany(order.cartItems)
+    } else {
+        await Order.deleteOne({ transaction_id: tran_id })
+    }
     res.sendFile(path.join(__basedir + '/public/success.html'))
+}
+
+exports.paymentCancel = async (req, res) => {
+    const tran_id = req.body['tran_id']
+
+    console.log(req.body);
+
+    // if (req.body['status'] === 'VALID') {
+    //     const order = await Order.updateOne({
+    //         transaction_id: tran_id
+    //     }, { status: 'Success' })
+    //     await CartItem.deleteMany(order.cartItems)
+    // } else {
+    //     await Order.deleteOne({ transaction_id: tran_id })
+    // }
+    res.sendFile(path.join(__basedir + '/public/cancel.html'))
+}
+
+exports.paymentFail = async (req, res) => {
+    const tran_id = req.body['tran_id']
+
+    console.log(req.body);
+
+    // if (req.body['status'] === 'VALID') {
+    //     const order = await Order.updateOne({
+    //         transaction_id: tran_id
+    //     }, { status: 'Success' })
+    //     await CartItem.deleteMany(order.cartItems)
+    // } else {
+    //     await Order.deleteOne({ transaction_id: tran_id })
+    // }
+    res.sendFile(path.join(__basedir + '/public/fail.html'))
 }
