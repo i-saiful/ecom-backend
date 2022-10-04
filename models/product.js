@@ -15,7 +15,14 @@ exports.Product = model('product', Schema({
         data: Buffer,
         contentType: String
     },
-    review: Number
+    review: {
+        type: Number,
+        default: 0
+    },
+    sold: {
+        type: Number,
+        default: 0
+    }
 }, {
     timestamps: true
 }))

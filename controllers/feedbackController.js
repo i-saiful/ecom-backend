@@ -11,12 +11,16 @@ exports.createFeedback = async (req, res) => {
     const result = await feedback.save();
     const response = _.pick(result, ['user', 'feedback'])
 
+    // find product from product collection
     const updateReview = await Product.findOne({ _id: req.body.productId })
-        .select({ photo: 0 })
-    let count = updateReview.review || 0
-    count += 1
-    updateReview.review = count
-    const s = await updateReview.save()
+        .select({ review: 1 })
+
+    // update product and push product collection 
+    await Product.updateOne({
+        _id: req.body.productId
+    }, {
+        review: updateReview.review + 1
+    })
 
     res.send(response)
 }
