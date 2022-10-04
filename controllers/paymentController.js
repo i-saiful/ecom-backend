@@ -6,11 +6,17 @@ const path = require('path')
 const crypto = require('node:crypto')
 const SSLCommerzPayment = require('sslcommerz-lts');
 const { Product } = require('../models/product');
+const { Coupon } = require('../models/coupon');
 const store_id = process.env.SSLCOMMERZ_STORE_ID
 const store_passwd = process.env.SSLCOMMERZ_STORE_PASSWORD
 const is_live = false
 
 module.exports.initPayment = async (req, res) => {
+    let discount = ''
+    if (req.headers.coupon)
+        discount = await Coupon.findOne({ name: req.headers.coupon }).select({ amount: 1 })
+    // console.log('coupon after --');
+    // console.log(discount.amount);
     const userId = req.user._id
     const cartItems = await CartItem.find({ user: userId })
 
@@ -18,7 +24,7 @@ module.exports.initPayment = async (req, res) => {
 
     const total_amount = cartItems.map(item =>
         item.count * item.price)
-        .reduce((a, b) => a + b, 0)
+        .reduce((a, b) => a + b, 0) - discount.amount
 
     const total_item = cartItems.map(item => item.count)
         .reduce((a, b) => a + b, 0);
@@ -88,13 +94,15 @@ module.exports.initPayment = async (req, res) => {
         cartItems: cartItems,
         user: userId,
         transaction_id: tran_id,
-        address: profile
+        address: profile,
+        discount: discount.amount
     })
 
     if (response.status === 'SUCCESS') {
         order['sessionKey'] = response['sessionkey'];
         await order.save()
     }
+    console.log(response);
     return res.send(response)
 }
 

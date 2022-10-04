@@ -8,6 +8,7 @@ const authGoogleRouter = require('../routers/authGoogleRouter')
 const authFacebookRouter = require('../routers/authFacebookRouter')
 const feedbackRouter = require('../routers/feedbackRouter')
 const orderRouter = require('../routers/orderRouter')
+const couponRouter = require('../routers/couponRouter')
 
 module.exports = (app) => {
     app.use('/api/user', userRouter);
@@ -19,4 +20,5 @@ module.exports = (app) => {
     app.use('/api/payment', paymentRouter)
     app.use('/api/feedback', feedbackRouter)
     app.use('/api/order', orderRouter)
+    app.use('/api/coupon', couponRouter)
 }
