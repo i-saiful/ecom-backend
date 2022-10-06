@@ -146,13 +146,13 @@ exports.filterProducts = async (req, res) => {
             }
         }
     }
-    // console.log(skip)
+    // console.log(args)
     const products = await Product.find(args)
         .select({ photo: 0 })
         .sort({ [sortBy]: order })
         .skip(skip)
         .limit(limit)
         .populate('category', 'name')
-
+    // console.log(products.length)
     res.send(products)
 }

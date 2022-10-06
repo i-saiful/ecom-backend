@@ -12,6 +12,9 @@ exports.getOrder = async (req, res) => {
             createdAt: 1,
             discount: 1
         })
+        .sort({
+            createdAt: -1
+        })
         .populate({
             path: 'cartItems',
             populate: {

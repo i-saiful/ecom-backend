@@ -16,7 +16,6 @@ module.exports.initPayment = async (req, res) => {
     if (req.headers.coupon)
         discount = await Coupon.findOne({ name: req.headers.coupon }).select({ amount: 1 })
     // console.log('coupon after --');
-    // console.log(discount.amount);
     const userId = req.user._id
     const cartItems = await CartItem.find({ user: userId })
 
@@ -39,8 +38,7 @@ module.exports.initPayment = async (req, res) => {
 
     // Set the urls
     payment.setUrls({
-        // success: "https://ecom-backend-saiful-lab.herokuapp.com/api/payment/success",
-        success: "http://localhost:3001/api/payment/success",
+        success: "https://ecom-backend-saiful-lab.herokuapp.com/api/payment/success",
         fail: "https://ecom-backend-saiful-lab.herokuapp.com/api/payment/fail",
         cancel: "https://ecom-backend-saiful-lab.herokuapp.com/api/payment/cancel",
         ipn: "https://payment-gateway-saiful-lab.herokuapp.com/sslcommerz/ipn",
@@ -102,7 +100,6 @@ module.exports.initPayment = async (req, res) => {
         order['sessionKey'] = response['sessionkey'];
         await order.save()
     }
-    console.log(response);
     return res.send(response)
 }
 
@@ -141,7 +138,7 @@ exports.paymentSuccess = async (req, res) => {
 
         // update product collection => sold, quantity
         updateOrder.cartItems.map(async item => {
-            const result = await Product.updateOne({ _id: item.product._id },
+            await Product.updateOne({ _id: item.product._id },
                 {
                     sold: item.count + item.product.sold,
                     quantity: item.product.quantity - item.count
